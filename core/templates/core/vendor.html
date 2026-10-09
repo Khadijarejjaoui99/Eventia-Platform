@@ -1,0 +1,381 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{vendor.name}}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/vendor.css?v=2">
+    <link rel="stylesheet" href="/static/css/utils.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+  <!-- Vendor Hero Section -->
+<section class="vendor-hero">
+    <div class="container">
+        <div class="vendor-breadcrumb">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'vendors' %}">Vendors</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ vendor.name }}</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="vendor-hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="vendor-info">
+                        <div class="vendor-category">{{ vendor.get_category_display }}</div>
+                        <h1 class="vendor-title">{{ vendor.name }}</h1>
+
+                        <div class="vendor-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ vendor.location }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-star"></i>
+                                <span>{{ vendor.rating }} Rating</span>
+                            </div>
+                        </div>
+
+                        <div class="vendor-price">
+                            <span class="price-label">Starting from</span>
+                            <span class="price-value">${{ vendor.price }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="vendor-image-container">
+                            <img src="{{ vendor.image.url }}" alt="{{ vendor.name }}" class="vendor-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- Vendor Content Section -->
+    <section class="vendor-content-section">
+        <div class="container">
+            <div class="row vendor-content-row">
+                <div class="col-lg-8">
+                    <div class="vendor-details-card">
+                        <h2 class="section-title">About This Vendor</h2>
+                        <div class="vendor-description-full">
+                            <p>{{ vendor.description }}</p>
+                           <div class="vendor-services-section">
+                           {% if vendor.services_list %}
+                            <h3 class="subsection-title">Services Offered</h3>
+                            <ul class="feature-list">
+                                {% for service in vendor.services_list %}
+                                    <li><i class="fas fa-check-circle"></i>{{ service }}</li>
+                                {% endfor %}
+                           {% endif %}
+
+                            </ul>
+                          </div>
+
+
+                            <div class="vendor-portfolio">
+                                <h3 class="subsection-title">Portfolio</h3>
+                                <div class="portfolio-grid">
+                                    {% for img in vendor.portfolio_images %}
+                                    <div class="portfolio-item">
+                                        <img src="{{ img.url }}" alt="Portfolio Image">
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="contact-button-container">
+                                <button class="btn btn-primary btn-lg" id="contactBtn">
+                                    <i class="fas fa-envelope me-2"></i>Contact
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="sidebar-content">
+                        <div class="vendor-details-sidebar">
+                            <h2 class="section-title">Vendor Details</h2>
+                            <div class="detail-list">
+                                <div class="detail-item">
+                                    <i class="fas fa-user-tie"></i>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Experience</span>
+                                        <span class="detail-value">{{ vendor.experience_years }}+ Years</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-camera"></i>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Specialties</span>
+                                        <span class="detail-value">{{ vendor.specialties }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="detail-item">
+                                    <i class="fas fa-users"></i>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Team Size</span>
+                                        <span class="detail-value">{{ vendor.team_size }} </span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Price Range</span>
+                                        <span class="detail-value">{{ vendor.price_range }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <h2 class="section-title">Contact Information</h2>
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span>{{ vendor.phone }}</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>{{ vendor.email }}</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ vendor.address }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="availability-card">
+                            <h2 class="section-title">Availability</h2>
+                            <div class="availability-info">
+                                <div class="availability-item">
+                                    <div class="day">Monday</div>
+                                    <div class="available">{{ vendor.mon_status }}</div>
+                                </div>
+                                <div class="availability-item">
+                                    <div class="day">Tuesday</div>
+                                    <div class="available">{{ vendor.tue_status }}</div>
+                                </div>
+                                <div class="availability-item">
+                                    <div class="day">Wednesday</div>
+                                    <div class="available">{{ vendor.wed_status }}</div>
+                                </div>
+                                <div class="availability-item">
+                                    <div class="day">Thursday</div>
+                                    <div class="available">{{ vendor.thu_status }}</div>
+                                </div>
+                                <div class="availability-item">
+                                    <div class="day">Friday</div>
+                                    <div class="available">{{ vendor.fri_status }}</div>
+                                </div>
+                                <div class="availability-item">
+                                    <div class="day">Saturday</div>
+                                    <div class="available">{{ vendor.sat_status }}</div>
+                                </div>
+                                <div class="availability-item">
+                                    <div class="day">Sunday</div>
+                                    <div class="available">{{ vendor.sun_status }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-brand">
+                        <i class="fas fa-calendar-star me-2"></i>
+                        <span>Eventia</span>
+                    </div>
+                    <p class="footer-description">
+                        Creating unforgettable moments through innovative event management and AI-powered networking.
+                    </p>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Connect</h5>
+                    <div class="social-links">
+                        <a href="#"><i class="fas fa-globe"></i></a>
+                        <a href="#"><i class="fas fa-comments"></i></a>
+                        <a href="#"><i class="fas fa-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Modal -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contactModalLabel">Contact</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventType" class="form-label">Event Type</label>
+                            <select class="form-select" id="eventType" required>
+                                <option value="">Select event type</option>
+                                <option value="wedding">Wedding</option>
+                                <option value="corporate">Corporate Event</option>
+                                <option value="portrait">Portrait Session</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="eventDate" class="form-label">Event Date</label>
+                                <input type="date" class="form-control" id="eventDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="budget" class="form-label">Budget Range</label>
+                                <select class="form-select" id="budget" required>
+                                    <option value="">Select budget range</option>
+                                    <option value="1000-2000">$1,000 - $2,000</option>
+                                    <option value="2000-3000">$2,000 - $3,000</option>
+                                    <option value="3000-5000">$3,000 - $5,000</option>
+                                    <option value="5000+">$5,000+</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="newsletter">
+                            <label class="form-check-label" for="newsletter">
+                                I would like to receive vendor updates and special offers
+                            </label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitContact">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Contact Modal
+        const contactModal = new bootstrap.Modal(document.getElementById('contactModal'));
+
+        document.getElementById('contactBtn').addEventListener('click', function() {
+            contactModal.show();
+        });
+
+        document.getElementById('submitContact').addEventListener('click', function() {
+            // Basic form validation
+            const form = document.getElementById('contactForm');
+            if (form.checkValidity()) {
+                // In a real application, you would submit form data to your server
+                alert('Message sent successfully! We will contact you within 24 hours.');
+                contactModal.hide();
+                form.reset();
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

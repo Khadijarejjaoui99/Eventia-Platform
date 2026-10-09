@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Dashboard</title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS ANIMATION -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CUSTOM STYLE -->
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/utils.css">
+    <link rel="stylesheet" href="/static/css/organizer_dashboard.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h4 class="sidebar-title">Organizer</h4>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="{% url 'organizer' %}" class="sidebar-link active">
+                        <i class="fas fa-tachometer-alt me-3"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'profile' request.user.id %}" class="sidebar-link">
+                        <i class="fas fa-user me-3"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#addEventModal">
+                        <i class="fas fa-plus-circle me-3"></i>
+                        <span>Add New Event</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'manage_events' %}" class="sidebar-link">
+                        <i class="fas fa-calendar-alt me-3"></i>
+                        <span>Manage My Events</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="{% url 'analytics' %}" class="sidebar-link">
+                        <i class="fas fa-chart-bar me-3"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h2 class="greeting">Welcome, {{ user.first_name }}! <i class="fas fa-hand-wave text-primary"></i></h2>
+                        <p class="greeting-subtitle">Here's what's happening with your events today</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stats-mini">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="row">
+                    <!-- Upcoming Events -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="dashboard-card" data-aos="fade-up">
+                            <div class="card-header">
+                                <h4 class="card-title">Events</h4>
+                                <a href="#" class="view-all">View All</a>
+                            </div>
+                            <div class="card-body">
+                                {% if events %}
+                                    {% for event in events %}
+                                    <div class="event-item">
+                                        <div class="event-date">
+                                            <div class="date-day">{{ event.date|date:"d" }}</div>
+                                            <div class="date-month">{{ event.date|date:"M" }}</div>
+                                        </div>
+                                        <div class="event-details">
+                                            <h5>{{ event.title }}</h5>
+                                            <p><i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}</p>
+                                            <div class="event-stats">
+                                                <span class="stat">{{ event.category}} </span>
+                                                <span class="stat"><i class="fas fa-clock me-1"></i> {{event.start_time}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="event-actions">
+                                            <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No upcoming events yet.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Registrations -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="dashboard-card" data-aos="fade-up" data-aos-delay="100">
+                            <div class="card-header">
+                                <h4 class="card-title">Recent Registrations</h4>
+                            </div>
+                            <div class="card-body">
+                                {% if recent_registrations %}
+                                    {% for registration in recent_registrations %}
+                                    <div class="registration-item">
+                                        <div class="registration-details">
+                                            <h5>{{ registration.user.get_full_name|default:registration.user.username }}</h5>
+                                            <p>Registered for <strong>{{ registration.event.title }}</strong></p>
+                                            <div class="registration-date">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ registration.created_at|timesince }} ago
+                                            </div>
+                                        </div>
+                                        <div class="registration-actions">
+                                            <a href="{% url 'event_detail' registration.event.id %}" class="btn btn-sm btn-outline-primary">View Event</a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No recent registrations.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEventModalLabel">Create New Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                    <form method="POST" action="{% url 'create_event' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                    <div class="modal-body">
+                        <!-- Basic Event Information -->
+                        <div class="section-title">Basic Information</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_title" class="form-label">Event Title</label>
+                                <input type="text" class="form-control" id="id_title" name="title" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_category" class="form-label">Category</label>
+                                <select class="form-select" id="id_category" name="category" required>
+                                    <option value="" selected disabled>Select category</option>
+                                     <option value="technology">Technology</option>
+                                     <option value="music">Music</option>
+                                     <option value="business">Business</option>
+                                     <option value="arts">Arts & Culture</option>
+                                     <option value="sports">Sports</option>
+                                     <option value="food">Food & Drink</option>
+                                     <option value="education">Education</option>
+                                     <option value="health">Health & Wellness</option>
+                                     <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            <textarea class="form-control" id="id_description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="id_location" name="location" required>
+                        </div>
+
+                        <!-- Date and Time -->
+                        <div class="section-title">Date and Time</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_date" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="id_date" name="date" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="id_start_time" class="form-label">Start Time</label>
+                                <input type="time" class="form-control" id="id_start_time" name="start_time">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="id_end_time" class="form-label">End Time</label>
+                                <input type="time" class="form-control" id="id_end_time" name="end_time">
+                            </div>
+                        </div>
+
+                        <!-- Event Details -->
+                        <div class="section-title">Event Details</div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="id_attendees" class="form-label">Max Attendees</label>
+                                <input type="number" class="form-control" id="id_attendees" name="attendees" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_price" class="form-label">Ticket Price ($)</label>
+                                <input type="number" class="form-control" id="id_price" name="price" step="0.01" min="0" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_rating" class="form-label">Rating (0-5)</label>
+                                <input type="number" class="form-control" id="id_rating" name="rating" step="0.1" min="0" max="5">
+                            </div>
+                        </div>
+
+                        <!-- Host Information -->
+                        <div class="section-title">Host Information</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_host_name" class="form-label">Host Name</label>
+                                <input type="text" class="form-control" id="id_host_name" name="host_name">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_host_image" class="form-label">Host Image</label>
+                                <input type="file" class="form-control" id="id_host_image" name="host_image" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_host_description" class="form-label">Host Description</label>
+                            <textarea class="form-control" id="id_host_description" name="host_description" rows="3"></textarea>
+                        </div>
+
+                        <!-- Venue Details -->
+                        <div class="section-title">Venue Details</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_venue_name" class="form-label">Venue Name</label>
+                                <input type="text" class="form-control" id="id_venue_name" name="venue_name">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_venue_address" class="form-label">Venue Address</label>
+                                <input type="text" class="form-control" id="id_venue_address" name="venue_address">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_wifi" name="wifi">
+                                    <label class="form-check-label" for="id_wifi">
+                                        WiFi Available
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_parking" name="parking">
+                                    <label class="form-check-label" for="id_parking">
+                                        Parking Available
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_restaurant" name="restaurant">
+                                    <label class="form-check-label" for="id_restaurant">
+                                        Restaurant On-site
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_accessible" name="accessible">
+                                    <label class="form-check-label" for="id_accessible">
+                                        Wheelchair Accessible
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Image -->
+                        <div class="section-title">Event Image</div>
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label">Event Image</label>
+                            <input type="file" class="form-control" id="id_image" name="image" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Event</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS ANIMATION JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- CHART JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- CUSTOM JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Add mobile menu toggle button if needed
+        if (window.innerWidth < 992) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'sidebar-toggle';
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleBtn.onclick = toggleSidebar;
+
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(toggleBtn, mainContent.firstChild);
+        }
+
+        // Initialize Performance Chart
+        const ctx = document.getElementById('eventPerformanceChart').getContext('2d');
+        const eventPerformanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Tickets Sold',
+                        data: [65, 78, 90, 81, 96, 105],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Revenue ($)',
+                        data: [1200, 1900, 3000, 2500, 3200, 3800],
+                        borderColor: '#ec4899',
+                        backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Tickets Sold'
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Revenue ($)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Save Event
+        document.getElementById('saveEventBtn').addEventListener('click', function() {
+            const form = document.getElementById('createEventForm');
+
+            // Basic validation
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // In a real app, this would make an API call to create the event
+            // For now, we'll just show a success message
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
+            modal.hide();
+
+            // Show success message
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+            alert.style.zIndex = '9999';
+            alert.innerHTML = `
+                <strong>Success!</strong> Your event has been created.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alert);
+
+            // Auto remove the alert after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

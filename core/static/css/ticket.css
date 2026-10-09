@@ -1,0 +1,419 @@
+/* ticket.css - Beautiful ticket design optimized for viewport height */
+
+/* Base styles */
+body {
+    background-color: #f5f7fa;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    padding-top: 100px; /* Account for fixed navbar */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main container styling */
+.container.mt-5 {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ticket wrapper */
+.ticket-wrapper {
+    position: relative;
+    margin: 0 auto;
+    max-width: 600px;
+    width: 100%;
+    perspective: 1000px;
+}
+
+/* Ticket card */
+.ticket-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 1rem;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+/* Ticket header */
+.ticket-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.ticket-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    animation: pulse 4s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+.ticket-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.5px;
+}
+
+/* Ticket content */
+.ticket-content {
+    padding: 1.5rem;
+    position: relative;
+}
+
+/* User info section */
+.user-info {
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #667eea;
+}
+
+.user-info p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.user-info i {
+    margin-right: 0.8rem;
+    color: #667eea;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* QR Code section */
+.qr-section {
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+.qr-code {
+    display: inline-block;
+    padding: 1rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.qr-code::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+.qr-code img {
+    width: 100%;
+    height: auto;
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.qr-label {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Ticket perforation effect */
+.ticket-perforation {
+    height: 20px;
+    background: #f5f7fa;
+    position: relative;
+    margin: 0 -1px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.ticket-perforation::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: repeating-linear-gradient(
+        90deg,
+        #ddd,
+        #ddd 10px,
+        transparent 10px,
+        transparent 20px
+    );
+    transform: translateY(-50%);
+}
+
+/* Action buttons */
+.ticket-actions {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #e0e0e0;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+/* Decorative elements */
+.ticket-decoration {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    z-index: -1;
+}
+
+.ticket-decoration.top-right {
+    top: -40px;
+    right: -40px;
+}
+
+.ticket-decoration.bottom-left {
+    bottom: -40px;
+    left: -40px;
+}
+
+/* Status badge */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #4caf50;
+    color: white;
+    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.3);
+}
+
+/* Ticket footer */
+.ticket-footer {
+    background: #f8f9fa;
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #666;
+    border-top: 1px solid #e0e0e0;
+}
+
+.ticket-number {
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+/* Print button */
+.print-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    margin-left: 8px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.print-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Event details */
+.event-details {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #667eea;
+}
+
+.event-details h3 {
+    margin-top: 0;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding-top: 80px; /* Adjust for smaller navbar on mobile */
+    }
+
+    .ticket-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .ticket-content {
+        padding: 1rem;
+    }
+
+    .user-info {
+        padding: 0.8rem;
+    }
+
+    .btn-primary {
+        padding: 8px 20px;
+        font-size: 0.85rem;
+    }
+
+    .qr-code {
+        max-width: 180px;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        background-color: white;
+        padding-top: 0; /* Remove padding for print */
+    }
+
+    .btn-primary, .print-btn {
+        display: none;
+    }
+
+    .ticket-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .ticket-decoration {
+        display: none;
+    }
+}
+
+/* Animation for page load */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ticket-wrapper {
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Ticket holographic effect */
+.holographic {
+    position: relative;
+    overflow: hidden;
+}
+
+.holographic::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transform: skewX(-25deg);
+    transition: all 0.75s;
+}
+
+.holographic:hover::after {
+    left: 150%;
+}

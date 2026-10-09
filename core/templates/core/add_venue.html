@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Add Venue</h2>
+
+<form method="POST">
+  {% csrf_token %}
+  <input type="text" name="name" placeholder="Venue Name" required><br>
+  <input type="text" name="city" placeholder="City" required><br>
+  <input type="number" name="capacity" placeholder="Capacity" required><br>
+  <input type="number" name="price_start" placeholder="Price From"><br>
+  <input type="number" name="price_end" placeholder="Price To"><br>
+
+  <button type="submit">Add Venue</button>
+</form>
+
+</body>
+</html>

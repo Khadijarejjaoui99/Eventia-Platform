@@ -1,0 +1,685 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Venues — Eventia</title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS ANIMATION -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CUSTOM STYLE -->
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/utils.css">
+    <link rel="stylesheet" href="/static/css/manage_events.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h4 class="sidebar-title">Venue Manager</h4>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="" class="sidebar-link">
+                        <i class="fas fa-tachometer-alt me-3"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'profile' request.user.id %}" class="sidebar-link">
+                        <i class="fas fa-user me-3"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#addVenueModal">
+                        <i class="fas fa-plus-circle me-3"></i>
+                        <span>Add New Venue</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'manage_venues' %}" class="sidebar-link active">
+                         <i class="fas fa-building me-3"></i>
+                        <span>Manage My Venues</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h2 class="greeting">Manage My Venues <i class="fas fa-building text-primary"></i></h2>
+                        <p class="greeting-subtitle">View, edit, and manage all your venues</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVenueModal">
+                                <i class="fas fa-plus me-2"></i>Add New Venue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Venues Table -->
+            <div class="events-table-container" data-aos="fade-up">
+                <div class="table-header">
+                    <h4>All Venues</h4>
+                    <div class="table-actions">
+                        <div class="search-box">
+                            <input type="text" class="form-control" placeholder="Search venues..." id="searchInput">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="events-table">
+                        <thead>
+                            <tr>
+                                <th>Venue</th>
+                                <th>Category</th>
+                                <th>Location</th>
+                                <th>Capacity</th>
+                                <th>Price Range</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if venues %}
+                                {% for venue in venues %}
+                                <tr class="event-row" data-venue-id="{{ venue.id }}">
+                                    <td>
+                                        <div class="event-info">
+                                            <div class="event-image">
+                                                <img src="{% if venue.image1 %}{{ venue.image1.url }}{% else %}{% static 'core/images/venue-placeholder.jpg' %}{% endif %}" alt="{{ venue.name }}">
+                                            </div>
+                                            <div class="event-details">
+                                                <h5>{{ venue.name }}</h5>
+                                                <span class="event-category">{{ venue.category }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="event-category">
+                                            {{ venue.category }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="event-location">
+                                            <i class="fas fa-map-marker-alt me-2"></i>
+                                            {{ venue.address }}, {{ venue.city }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="event-time">
+                                            <i class="fas fa-users me-2"></i>
+                                            {{ venue.capacity }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="revenue">
+                                            ${{ venue.price_start }} - ${{ venue.price_end }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="rating">
+                                            <i class="fas fa-star text-warning"></i>
+                                            {{ venue.rating }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="{% url 'venue_detail' venue.id %}" class="btn btn-sm btn-outline-primary" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="javascript:void(0);"
+                                               class="btn btn-sm btn-outline-secondary"
+                                               onclick="editVenue(this)"
+                                               data-id="{{ venue.id }}"
+                                               data-name="{{ venue.name }}"
+                                               data-category="{{ venue.category }}"
+                                               data-address="{{ venue.address }}"
+                                               data-city="{{ venue.city }}"
+                                               data-description="{{ venue.description }}"
+                                               data-capacity="{{ venue.capacity }}"
+                                               data-event-duration="{{ venue.event_duration }}"
+                                               data-size="{{ venue.size }}"
+                                               data-price-start="{{ venue.price_start }}"
+                                               data-price-end="{{ venue.price_end }}"
+                                               data-phone="{{ venue.phone }}"
+                                               data-email="{{ venue.email }}"
+                                               data-wifi="{{ venue.wifi }}"
+                                               data-parking="{{ venue.parking }}"
+                                               data-catering="{{ venue.catering }}"
+                                               data-accessible="{{ venue.accessible }}"
+                                               data-sound-system="{{ venue.sound_system }}"
+                                               data-av-equipment="{{ venue.av_equipment }}"
+                                               data-rating="{{ venue.rating }}">
+                                               <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" title="Delete" onclick="confirmDelete({{ venue.id }})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="no-events">
+                                        <div class="empty-state">
+                                            <i class="fas fa-building-times"></i>
+                                            <h4>No venues yet</h4>
+                                            <p>Add your first venue to get started</p>
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVenueModal">
+                                                <i class="fas fa-plus me-2"></i>Add Venue
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Venue Modal -->
+    <div class="modal fade" id="addVenueModal" tabindex="-1" aria-labelledby="addVenueModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addVenueModalLabel">Add New Venue</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                    <form method="POST" action="{% url 'create_venue' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                    <div class="modal-body">
+                        <!-- Basic Venue Information -->
+                        <div class="section-title">Basic Information</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_name" class="form-label">Venue Name</label>
+                                <input type="text" class="form-control" id="id_name" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_category" class="form-label">Category</label>
+                                <input type="text" class="form-control" id="id_category" name="category" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            <textarea class="form-control" id="id_description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="id_address" name="address" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="id_city" name="city" required>
+                            </div>
+                        </div>
+
+                        <!-- Venue Details -->
+                        <div class="section-title">Venue Details</div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="id_capacity" class="form-label">Capacity</label>
+                                <input type="number" class="form-control" id="id_capacity" name="capacity" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_event_duration" class="form-label">Event Duration</label>
+                                <input type="text" class="form-control" id="id_event_duration" name="event_duration" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_size" class="form-label">Size (sq ft)</label>
+                                <input type="number" class="form-control" id="id_size" name="size" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_price_start" class="form-label">Starting Price ($)</label>
+                                <input type="number" class="form-control" id="id_price_start" name="price_start" step="0.01" min="0" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_price_end" class="form-label">Ending Price ($)</label>
+                                <input type="number" class="form-control" id="id_price_end" name="price_end" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="id_phone" name="phone" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="id_email" name="email" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_rating" class="form-label">Rating (0-5)</label>
+                                <input type="number" class="form-control" id="id_rating" name="rating" step="0.1" min="0" max="5">
+                            </div>
+                        </div>
+
+                        <!-- Amenities -->
+                        <div class="section-title">Amenities</div>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_wifi" name="wifi">
+                                    <label class="form-check-label" for="id_wifi">
+                                        WiFi Available
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_parking" name="parking">
+                                    <label class="form-check-label" for="id_parking">
+                                        Parking Available
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_catering" name="catering">
+                                    <label class="form-check-label" for="id_catering">
+                                        Catering Service
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_accessible" name="accessible">
+                                    <label class="form-check-label" for="id_accessible">
+                                        Wheelchair Accessible
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_sound_system" name="sound_system">
+                                    <label class="form-check-label" for="id_sound_system">
+                                        Sound System
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="id_av_equipment" name="av_equipment">
+                                    <label class="form-check-label" for="id_av_equipment">
+                                        AV Equipment
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gallery Images -->
+                        <div class="section-title">Gallery Images</div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="id_image1" class="form-label">Image 1</label>
+                                <input type="file" class="form-control" id="id_image1" name="image1" accept="image/*">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="id_image2" class="form-label">Image 2</label>
+                                <input type="file" class="form-control" id="id_image2" name="image2" accept="image/*">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="id_image3" class="form-label">Image 3</label>
+                                <input type="file" class="form-control" id="id_image3" name="image3" accept="image/*">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="id_image4" class="form-label">Image 4</label>
+                                <input type="file" class="form-control" id="id_image4" name="image4" accept="image/*">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Venue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Venue Modal -->
+    <div class="modal fade" id="editVenueModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Venue</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <form id="editVenueForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="modal-body">
+
+              <!-- Basic Information -->
+              <div class="section-title">Basic Information</div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Venue Name</label>
+                  <input type="text" class="form-control" id="edit_name" name="name">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Category</label>
+                  <input type="text" class="form-control" id="edit_category" name="category">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" id="edit_description" name="description"></textarea>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Address</label>
+                  <input type="text" class="form-control" id="edit_address" name="address">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">City</label>
+                  <input type="text" class="form-control" id="edit_city" name="city">
+                </div>
+              </div>
+
+              <!-- Venue Details -->
+              <div class="section-title">Venue Details</div>
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label>Capacity</label>
+                  <input type="number" class="form-control" id="edit_capacity" name="capacity">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label>Event Duration</label>
+                  <input type="text" class="form-control" id="edit_event_duration" name="event_duration">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label>Size (sq ft)</label>
+                  <input type="number" class="form-control" id="edit_size" name="size">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label>Starting Price ($)</label>
+                  <input type="number" class="form-control" id="edit_price_start" name="price_start" step="0.01">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label>Ending Price ($)</label>
+                  <input type="number" class="form-control" id="edit_price_end" name="price_end" step="0.01">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label>Phone</label>
+                  <input type="text" class="form-control" id="edit_phone" name="phone">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label>Email</label>
+                  <input type="email" class="form-control" id="edit_email" name="email">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label>Rating (0-5)</label>
+                  <input type="number" class="form-control" id="edit_rating" name="rating" step="0.1" min="0" max="5">
+                </div>
+              </div>
+
+              <!-- Amenities -->
+              <div class="section-title">Amenities</div>
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="edit_wifi" name="wifi">
+                    <label class="form-check-label">WiFi Available</label>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="edit_parking" name="parking">
+                    <label class="form-check-label">Parking Available</label>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="edit_catering" name="catering">
+                    <label class="form-check-label">Catering Service</label>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="edit_accessible" name="accessible">
+                    <label class="form-check-label">Wheelchair Accessible</label>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="edit_sound_system" name="sound_system">
+                    <label class="form-check-label">Sound System</label>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="edit_av_equipment" name="av_equipment">
+                    <label class="form-check-label">AV Equipment</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Gallery Images -->
+              <div class="section-title">Gallery Images</div>
+              <div class="row">
+                <div class="col-md-3 mb-3">
+                  <label>Image 1</label>
+                  <input type="file" class="form-control" id="edit_image1" name="image1" accept="image/*">
+                </div>
+                <div class="col-md-3 mb-3">
+                  <label>Image 2</label>
+                  <input type="file" class="form-control" id="edit_image2" name="image2" accept="image/*">
+                </div>
+                <div class="col-md-3 mb-3">
+                  <label>Image 3</label>
+                  <input type="file" class="form-control" id="edit_image3" name="image3" accept="image/*">
+                </div>
+                <div class="col-md-3 mb-3">
+                  <label>Image 4</label>
+                  <input type="file" class="form-control" id="edit_image4" name="image4" accept="image/*">
+                </div>
+              </div>
+
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button class="btn btn-primary">Update Venue</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this venue? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS ANIMATION JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- CUSTOM JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Add mobile menu toggle button if needed
+        if (window.innerWidth < 992) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'sidebar-toggle';
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleBtn.onclick = toggleSidebar;
+
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(toggleBtn, mainContent.firstChild);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+
+            document.querySelectorAll('.event-row').forEach(row => {
+                const venueName = row.querySelector('.event-details h5').textContent.toLowerCase();
+                const venueCategory = row.querySelector('.event-category').textContent.toLowerCase();
+                const venueLocation = row.querySelector('.event-location').textContent.toLowerCase();
+
+                if (venueName.includes(searchTerm) ||
+                    venueCategory.includes(searchTerm) ||
+                    venueLocation.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Edit Venue
+        function editVenue(btn) {
+            document.getElementById("edit_name").value = btn.dataset.name;
+            document.getElementById("edit_category").value = btn.dataset.category;
+            document.getElementById("edit_description").value = btn.dataset.description;
+            document.getElementById("edit_address").value = btn.dataset.address;
+            document.getElementById("edit_city").value = btn.dataset.city;
+            document.getElementById("edit_capacity").value = btn.dataset.capacity;
+            document.getElementById("edit_event_duration").value = btn.dataset.eventDuration;
+            document.getElementById("edit_size").value = btn.dataset.size;
+            document.getElementById("edit_price_start").value = btn.dataset.priceStart;
+            document.getElementById("edit_price_end").value = btn.dataset.priceEnd;
+            document.getElementById("edit_phone").value = btn.dataset.phone;
+            document.getElementById("edit_email").value = btn.dataset.email;
+            document.getElementById("edit_rating").value = btn.dataset.rating;
+
+            document.getElementById("edit_wifi").checked = btn.dataset.wifi === "True";
+            document.getElementById("edit_parking").checked = btn.dataset.parking === "True";
+            document.getElementById("edit_catering").checked = btn.dataset.catering === "True";
+            document.getElementById("edit_accessible").checked = btn.dataset.accessible === "True";
+            document.getElementById("edit_sound_system").checked = btn.dataset.soundSystem === "True";
+            document.getElementById("edit_av_equipment").checked = btn.dataset.avEquipment === "True";
+
+            // Set form action dynamically
+            document.getElementById("editVenueForm").action = `/venues/${btn.dataset.id}/edit/`;
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById("editVenueModal"));
+            modal.show();
+        }
+
+        // Delete venue confirmation
+        let venueIdToDelete = null;
+
+        function confirmDelete(venueId) {
+            venueIdToDelete = venueId;
+            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            modal.show();
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (venueIdToDelete) {
+                window.location.href = `/venues/${venueIdToDelete}/delete/`;
+            }
+        });
+    </script>
+</body>
+</html>

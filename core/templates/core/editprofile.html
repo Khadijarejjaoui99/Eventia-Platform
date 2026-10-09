@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile </title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS ANIMATION -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CUSTOM STYLE -->
+    <link rel="stylesheet" href="/static/css/editprofile.css">
+    <link rel="stylesheet" href="/static/css/utils.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+
+    <!-- Edit Profile Container -->
+    <div class="edit-profile-container">
+        <!-- Edit Profile Header -->
+        <div class="edit-profile-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="header-content" data-aos="fade-up">
+                            <h1 class="page-title">Edit Profile</h1>
+                            <p class="page-subtitle">Update your personal information and preferences</p>
+                            <div class="back-to-profile">
+                                <a href="{% url 'profile' request.user.id %}" class="btn btn-back">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Content -->
+        <div class="edit-profile-content">
+            <div class="container">
+                <div class="row">
+                    <!-- Main Content -->
+                    <div class="col-lg-8">
+                        <!-- Basic Info Section -->
+                        <div class="edit-section" data-aos="fade-up">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    <i class="fas fa-address-card me-2"></i>Basic Information
+                                </h3>
+                                <p class="section-subtitle">Update your personal details</p>
+                            </div>
+                            <div class="section-content">
+                                <form method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="first_name" class="form-label">First Name</label>
+                                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="last_name" class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="profile_photo" class="form-label">Profile Photo</label>
+                                        <div class="avatar-upload-container">
+                                            <div class="upload-controls">
+                                                <input type="file" class="form-control" id="profile_photo" name="profile_photo" accept="image/*">
+                                                <small class="form-text text-muted">Upload a new profile photo (JPG, PNG, max 5MB)</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bio" class="form-label">Bio / About Me</label>
+                                        <textarea class="form-control" id="bio" name="bio" rows="5">{{ profile.bio }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="location" class="form-label">Location</label>
+                                        <input type="text" class="form-control" id="location" name="location" value="{{ profile.location }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="languages" class="form-label">Languages</label>
+                                        <input type="text" class="form-control" id="languages" name="languages" value="{{ profile.languages }}">
+                                    </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills Section -->
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="col-lg-4">
+                        <!-- Interests Section -->
+                    <div class="edit-section" data-aos="fade-up" data-aos-delay="200">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-heart me-2"></i>Interests
+                            </h3>
+                            <p class="section-subtitle">Update your interest</p>
+                        </div>
+                        <div class="section-content">
+                            {% for choice in interest_choices %}
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input" type="radio"
+                                           name="interest" value="{{ choice }}" id="interest-{{ forloop.counter }}"
+                                           {% if profile.interests == choice %}checked{% endif %}>
+                                    <label class="form-check-label" for="interest-{{ forloop.counter }}">
+                                        {{ choice }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                        <!-- Social Links Section -->
+                        <div class="edit-section" data-aos="fade-up" data-aos-delay="300">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    <i class="fas fa-share-alt me-2"></i>Social Links
+                                </h3>
+                                <p class="section-subtitle">Update your social media links</p>
+                            </div>
+                            <div class="section-content">
+                                <div class="social-link-edit">
+                                    <label for="instagram" class="form-label">
+                                        <i class="fab fa-instagram me-2"></i>Instagram
+                                    </label>
+                                    <input type="text" class="form-control" id="instagram" name="instagram" placeholder="Instagram username">
+                                </div>
+                                <div class="social-link-edit">
+                                    <label for="facebook" class="form-label">
+                                        <i class="fab fa-facebook me-2"></i>Facebook
+                                    </label>
+                                    <input type="text" class="form-control" id="facebook" name="facebook" placeholder="Facebook username">
+                                </div>
+                                <div class="social-link-edit">
+                                    <label for="twitter" class="form-label">
+                                        <i class="fab fa-x-twitter me-2"></i>X (Twitter)
+                                    </label>
+                                    <input type="text" class="form-control" id="twitter" name="twitter" placeholder="X username">
+                                </div>
+                                <div class="social-link-edit">
+                                    <label for="linkedin" class="form-label">
+                                        <i class="fab fa-linkedin me-2"></i>LinkedIn
+                                    </label>
+                                    <input type="text" class="form-control" id="linkedin" name="linkedin" placeholder="LinkedIn username">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Actions -->
+                        <div class="save-actions" data-aos="fade-up" data-aos-delay="400">
+                            <button type="submit" class="btn btn-save">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <a href="#" class="btn btn-cancel">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h5 class="modal-title" id="successModalLabel">Profile Updated!</h5>
+                    <p class="text-muted">Your profile has been updated successfully.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS ANIMATION JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- CUSTOM JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Avatar upload preview
+        document.getElementById('profile_photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatar-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Add skill functionality
+        document.getElementById('add-skill-btn').addEventListener('click', function() {
+            const skillsContainer = document.getElementById('skills-container');
+            const skillItem = document.createElement('div');
+            skillItem.className = 'skill-item-edit';
+
+            const icons = ['fa-camera', 'fa-palette', 'fa-paint-brush', 'fa-video', 'fa-code', 'fa-music', 'fa-pen', 'fa-laptop'];
+            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+
+            skillItem.innerHTML = `
+                <div class="skill-icon">
+                    <i class="fas ${randomIcon}"></i>
+                </div>
+                <div class="skill-content">
+                    <input type="text" class="form-control skill-name" placeholder="Skill name">
+                    <textarea class="form-control skill-description" rows="2" placeholder="Skill description"></textarea>
+                </div>
+                <button type="button" class="btn btn-remove-skill">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            skillsContainer.appendChild(skillItem);
+
+            // Add event listener to the new remove button
+            skillItem.querySelector('.btn-remove-skill').addEventListener('click', function() {
+                skillItem.remove();
+            });
+        });
+
+        // Remove skill functionality
+        document.querySelectorAll('.btn-remove-skill').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.skill-item-edit').remove();
+            });
+        });
+
+        // Add interest functionality
+        document.getElementById('add-interest-btn').addEventListener('click', function() {
+            const interestsContainer = document.getElementById('interests-container');
+            const interestItem = document.createElement('div');
+            interestItem.className = 'interest-item-edit';
+
+            const icons = ['fa-music', 'fa-running', 'fa-book', 'fa-laptop-code', 'fa-gamepad', 'fa-film', 'fa-plane', 'fa-utensils'];
+            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+
+            interestItem.innerHTML = `
+                <div class="interest-icon">
+                    <i class="fas ${randomIcon}"></i>
+                </div>
+                <input type="text" class="form-control interest-name" placeholder="Interest name">
+                <button type="button" class="btn btn-remove-interest">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            interestsContainer.appendChild(interestItem);
+
+            // Add event listener to the new remove button
+            interestItem.querySelector('.btn-remove-interest').addEventListener('click', function() {
+                interestItem.remove();
+            });
+        });
+
+        // Remove interest functionality
+        document.querySelectorAll('.btn-remove-interest').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.interest-item-edit').remove();
+            });
+        });
+
+
+    </script>
+</body>
+</html>

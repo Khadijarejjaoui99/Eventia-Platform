@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>My Venues</h2>
+
+<a href="{% url 'add_venue' %}">Add New Venue</a>
+
+<ul>
+  {% for venue in venues %}
+    <li>
+      <strong>{{ venue.name }}</strong> — {{ venue.city }}
+      |
+      <a href="{% url 'edit_venue' venue.id %}">Edit</a>
+      |
+      <a href="{% url 'delete_venue' venue.id %}">Delete</a>
+    </li>
+  {% empty %}
+    <li>No venues added yet.</li>
+  {% endfor %}
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventia</title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS ANIMATION -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CUSTOM STYLE -->
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <link rel="stylesheet" href="/static/css/utils.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+
+    <!-- Profile Container -->
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-4 text-center text-lg-start">
+                        <div class="profile-avatar-section" data-aos="fade-right">
+                            <div class="avatar-container">
+                                {% if user_profile.profile_image %}
+                                    <img src="{{ user_profile.profile_image.url }}" alt="Profile Photo" class="profile-avatar">
+                                {% else %}
+                                    <img src="/static/images/default-profile.png" alt="Default Photo" class="profile-avatar">
+                                {% endif %}
+                            </div>
+                            <div class="profile-basic-info">
+                                <h1 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h1>
+                                <p class="profile-title">{{ user.userprofile.role.capitalize }}</p>
+                                <div class="profile-location">
+                                    {% if user_profile.location %}
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                       {{ user_profile.location }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                            <div class="profile-actions">
+                                <a href="{% url 'editprofile' %}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-edit me-2"></i>Edit Profile
+                                </a>
+                                <button id="shareProfile" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-share-alt me-2"></i>Share Profile
+                                </button>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <div class="container">
+                <div class="row">
+                    <!-- Main Content (Middle) -->
+                    <div class="col-lg-8">
+                        <!-- About Section -->
+                        <div class="profile-card" data-aos="fade-up">
+                            <div class="card-header">
+                                <h4 class="card-title"><i class="fas fa-info-circle me-2"></i>About</h4>
+                            </div>
+                            <div class="card-body">
+                               {% if user_profile.bio %}
+                                    <p class="about-text">{{ user_profile.bio}}</p>
+                                {% else %}
+                                    <p class="text-muted">You haven’t added anything about yourself yet.</p>
+                                    <a href="{% url 'editprofile' %}" class="btn btn-sm btn-primary mt-2">
+                                        Complete your profile
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Left Sidebar -->
+                    <div class="col-lg-4">
+                        <!-- Basic Info Section -->
+                        <div class="profile-card" data-aos="fade-up" data-aos-delay="200">
+                            <div class="card-header">
+                                <h4 class="card-title"><i class="fas fa-address-card me-2"></i>Basic Info</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="info-list">
+                                    <div class="info-item">
+                                        <i class="fas fa-user me-2"></i>
+                                        <span>{{ user.email }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        {% if user_profile.location %}
+                                            <span>{{ user_profile.location }}</span>
+                                        {% else %}
+                                            <span class="text-muted">Location not added.</span>
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-language me-2"></i>
+                                        {% if user_profile.languages %}
+                                            <span>{{ user_profile.languages }}</span>
+                                        {% else %}
+                                            <span class="text-muted">No languages added</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interests Section -->
+                        <div class="profile-card" data-aos="fade-up" data-aos-delay="300">
+                            <div class="card-header">
+                                <h4 class="card-title"><i class="fas fa-heart me-2"></i>Interest</h4>
+                            </div>
+                            <div class="card-body">
+                                {% if user_profile.interests %}
+                                    <div class="interest-item">
+                                        <div class="interest-icon">
+                                            {% if user_profile.interests == "Music" %}
+                                                <i class="fas fa-music"></i>
+                                            {% elif user_profile.interests == "Technology" %}
+                                                <i class="fas fa-laptop-code"></i>
+                                            {% elif user_profile.interests == "Art" %}
+                                                <i class="fas fa-palette"></i>
+                                            {% elif user_profile.interests == "Sports" %}
+                                                <i class="fas fa-running"></i>
+                                            {% elif user_profile.interests == "Reading" %}
+                                                <i class="fas fa-book"></i>
+                                            {% elif user_profile.interests == "Travel" %}
+                                                <i class="fas fa-star"></i>
+                                            {% elif user_profile.interests == "Gaming" %}
+                                                <i class="fas fa-gamepad"></i>
+                                            {% elif user_profile.interests == "Food" %}
+                                                <i class="fas fa-utensils"></i>
+                                            {% elif user_profile.interests == "Movies" %}
+                                                <i class="fas fa-film"></i>
+                                            {% elif user_profile.interests == "Fitness" %}
+                                                <i class="fas fa-dumbbell"></i>
+                                            {% endif %}
+                                        </div>
+                                        <span>{{ user_profile.interests }}</span>
+                                    </div>
+                                {% else %}
+                                    <p>No interest selected.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Social Links Section -->
+                        <div class="profile-card" data-aos="fade-up" data-aos-delay="400">
+                            <div class="card-header">
+                                <h4 class="card-title"><i class="fas fa-share-alt me-2"></i>Social Links</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="social-links">
+                                    <a href="https://instagram.com/{{ user_profile.instagram }}" class="social-link">
+                                        <i class="fab fa-instagram"></i>
+                                        <span>Instagram</span>
+                                    </a>
+                                    <a href="https://facebook.com/{{ user_profile.facebook }}" class="social-link">
+                                        <i class="fab fa-facebook"></i>
+                                        <span>Facebook</span>
+                                    </a>
+                                    <a href="https://x.com/{{ user_profile.twitter }}" class="social-link">
+                                        <i class="fab fa-x-twitter"></i>
+                                        <span>X (Twitter)</span>
+                                    </a>
+                                    <a href="https://linkedin.com/{{ user_profile.linkedin }}" class="social-link">
+                                        <i class="fab fa-linkedin"></i>
+                                        <span>LinkedIn</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS ANIMATION JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- CUSTOM JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Avatar upload preview
+        {#document.getElementById('avatar-upload').addEventListener('change', function(e) {#}
+        {#    const file = e.target.files[0];#}
+        {#    if (file && file.type.startsWith('image/')) {#}
+        {#        const reader = new FileReader();#}
+        {#        reader.onload = function(e) {#}
+        {#            document.querySelector('.profile-avatar').src = e.target.result;#}
+        {#        };#}
+        {#        reader.readAsDataURL(file);#}
+        {#    }#}
+        {#});#}
+
+        // Edit profile button
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+
+        });
+
+        // Share profile button
+        document.getElementById("shareProfile").addEventListener('click', function() {
+
+
+            if (navigator.share) {
+                navigator.share({
+                    title: "{{ user.first_name }} {{ user.last_name }}",
+                    text: 'Check out my creative artist profile on Eventia!',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                navigator.clipboard.writeText(window.location.href);
+                alert('Profile link copied to clipboard!');
+            }
+        });
+    </script>
+</body>
+</html>

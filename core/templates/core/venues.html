@@ -1,0 +1,520 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Venues</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    {% load static %}
+     <!-- Header + footer styles (shared) -->
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <!-- Page-specific styles (must come AFTER shared styles) -->
+  <link rel="stylesheet" href="/static/css/venues.css">
+    <link rel="stylesheet" href="/static/css/utils.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="page-header-content">
+                        <h1 class="page-title">Discover Perfect <span class="text-gradient">Venues</span></h1>
+                        <p class="page-description">Find the ideal location for your next event, from intimate gatherings to grand celebrations</p>
+                        <div class="page-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">500+</div>
+                                <div class="stat-label">Premium Venues</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">50+</div>
+                                <div class="stat-label">Cities</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">4.9</div>
+                                <div class="stat-label">Average Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="page-header-image">
+                        <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=600&fit=crop" alt="Event Venues">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-wrapper">
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search venues..." class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <select id="typeFilter" class="form-select">
+                            <option value="">All Types</option>
+                            <option value="conference">Conference Center</option>
+                            <option value="hotel">Hotel</option>
+                            <option value="outdoor">Outdoor</option>
+                            <option value="restaurant">Restaurant</option>
+                            <option value="ballroom">Ballroom</option>
+                            <option value="gallery">Art Gallery</option>
+                            <option value="theater">Theater</option>
+                            <option value="unique">Others</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <select id="locationFilter" class="form-select">
+                            <option value="">All Locations</option>
+                            <option value="nanjing">Nanjing</option>
+                            <option value="beijing">Beijing</option>
+                            <option value="shanghai">Shanghai</option>
+                            <option value="guangzhou">Guangzhou</option>
+                            <option value="shenzhen">Shenzhen</option>
+                            <option value="chongqing">Chongqing</option>
+                            <option value="tianjin">Tianjin</option>
+                            <option value="hangzhou">Hangzhou</option>
+                            <option value="chengdu">Chengdu</option>
+                            <option value="wuhan">Wuhan</option>
+                            <option value="xian">Xi'an</option>
+
+                            <!-- Major international cities -->
+                            <option value="new-york">New York</option>
+                            <option value="london">London</option>
+                            <option value="paris">Paris</option>
+                            <option value="tokyo">Tokyo</option>
+                            <option value="sydney">Sydney</option>
+                            <option value="dubai">Dubai</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <select id="capacityFilter" class="form-select">
+                            <option value="">All Capacities</option>
+                            <option value="small">Small (up to 50)</option>
+                            <option value="medium">Medium (50-200)</option>
+                            <option value="large">Large (200-500)</option>
+                            <option value="xlarge">Extra Large (500+)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-tags">
+                    <div class="active-filters" id="activeFilters">
+                        <!-- Active filters will be added here dynamically -->
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm clear-filters" onclick="clearAllFilters()">
+                        <i class="fas fa-redo"></i>
+                        Clear All Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Venues Grid -->
+    <section class="venues-grid-section">
+        <div class="container">
+            <div class="venues-header">
+                <h2 class="venues-count">Showing <span id="venueCount">{{ venues.count }}</span> Venues</h2>
+                <div class="view-toggle">
+                    <button class="btn btn-outline-secondary btn-sm active" data-view="grid" onclick="toggleView('grid')">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" data-view="list" onclick="toggleView('list')">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+
+<div class="row g-4" id="venuesContainer">
+    {% for venue in venues %}
+    <div class="col-lg-4 col-md-6 venue-item"
+         data-type="{{ venue.category|lower }}"
+         data-location="{{ venue.city|lower }}"
+         data-capacity="{{ venue.capacity }}"
+         data-price="{{ venue.price_start }}"
+         data-rating="{{ venue.rating }}" data-featured="{{ venue.featured }}"
+>
+
+        <div class="venue-card">
+            <div class="venue-image">
+                    <img src="{{ venue.image1.url }}" alt="{{ venue.name }}">
+
+                <div class="venue-badge">{{ venue.category }}</div>
+
+                <div class="venue-favorite" onclick="toggleFavorite(this)">
+                    <i class="far fa-heart"></i>
+                </div>
+
+                <div class="venue-overlay">
+                    <div class="venue-location">
+                        <i class="fas fa-map-marker-alt me-2"></i>{{ venue.city }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="venue-content">
+                <div class="venue-header">
+                    <h4>{{ venue.name }}</h4>
+                    <div class="venue-rating">
+                        <i class="fas fa-star"></i>
+                        <span>{{ venue.rating }}</span>
+                    </div>
+                </div>
+
+                <p>{{ venue.description|truncatechars:200 }}...</p>
+
+
+
+                <div class="venue-meta">
+                    <div class="venue-capacity">
+                        <i class="fas fa-users me-2"></i>Up to {{ venue.capacity }} guests
+                    </div>
+                    <div class="venue-price">
+                       From ${{ venue.price_start }}
+                    </div>
+                </div>
+
+                <div class="venue-footer">
+                    <a href="{% url 'venue_detail' venue.id %}" class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+            <!-- Pagination -->
+{#            <div class="pagination-wrapper">#}
+{#                <nav aria-label="Venues pagination">#}
+{#                    <ul class="pagination justify-content-center">#}
+{#                        <li class="page-item disabled">#}
+{#                            <a class="page-link" href="#" tabindex="-1">#}
+{#                                <i class="fas fa-chevron-left"></i>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        <li class="page-item active"><a class="page-link" href="#">1</a></li>#}
+{#                        <li class="page-item"><a class="page-link" href="#">2</a></li>#}
+{#                        <li class="page-item"><a class="page-link" href="#">3</a></li>#}
+{#                        <li class="page-item"><a class="page-link" href="#">4</a></li>#}
+{#                        <li class="page-item"><a class="page-link" href="#">5</a></li>#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="#">#}
+{#                                <i class="fas fa-chevron-right"></i>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                    </ul>#}
+{#                </nav>#}
+{#            </div>#}
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-wrapper">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="newsletter-content">
+                            <h3>Discover Exclusive Venues</h3>
+                            <p>Get notified about new venues and special offers for your perfect event location.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <form class="newsletter-form">
+                            <div class="input-group">
+                                <input type="email" class="form-control" placeholder="Enter your email address">
+                                <button class="btn btn-primary" type="submit">Subscribe</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-brand">
+                        <i class="fas fa-calendar-star me-2"></i>
+                        <span>Eventia</span>
+                    </div>
+                    <p class="footer-description">
+                        Creating unforgettable moments through innovative event management and AI-powered networking.
+                    </p>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Connect</h5>
+                    <div class="social-links">
+                        <a href="#"><i class="fas fa-globe"></i></a>
+                        <a href="#"><i class="fas fa-comments"></i></a>
+                        <a href="#"><i class="fas fa-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Filter and search functionality
+        let currentFilters = {
+            search: '',
+            type: '',
+            location: '',
+            capacity: '',
+            sortBy: 'featured'
+        };
+
+        // Initialize filters
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            currentFilters.search = e.target.value.toLowerCase();
+            applyFilters();
+        });
+
+        document.getElementById('typeFilter').addEventListener('change', function(e) {
+            currentFilters.type = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('locationFilter').addEventListener('change', function(e) {
+            currentFilters.location = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('capacityFilter').addEventListener('change', function(e) {
+            currentFilters.capacity = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('sortBy').addEventListener('change', function(e) {
+            currentFilters.sortBy = e.target.value;
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const venueItems = document.querySelectorAll('.venue-item');
+            let visibleCount = 0;
+
+            venueItems.forEach(item => {
+                let show = true;
+
+                // Search filter
+                if (currentFilters.search) {
+                    const title = item.querySelector('h4').textContent.toLowerCase();
+                    const description = item.querySelector('p').textContent.toLowerCase();
+                    if (!title.includes(currentFilters.search) && !description.includes(currentFilters.search)) {
+                        show = false;
+                    }
+                }
+
+                // Type filter
+                if (currentFilters.type && item.dataset.type.toLowerCase() !== currentFilters.type.toLowerCase()) {
+                    show = false;
+                }
+
+
+                // Location filter
+                 if (currentFilters.location && item.dataset.location.toLowerCase() !== currentFilters.location.toLowerCase()) {
+                    show = false;
+                }
+
+                // Capacity filter
+                if (currentFilters.capacity) {
+                    const cap = parseInt(item.dataset.capacity);
+                    switch(currentFilters.capacity) {
+                        case 'small':
+                            if (cap > 50) show = false;
+                            break;
+                        case 'medium':
+                            if (cap < 50 || cap > 200) show = false;
+                            break;
+                        case 'large':
+                            if (cap < 200 || cap > 500) show = false;
+                            break;
+                        case 'xlarge':
+                            if (cap < 500) show = false;
+                            break;
+                    }
+                }
+
+                if (show) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Update venue count
+            document.getElementById('venueCount').textContent = visibleCount;
+
+            // Update active filters display
+            updateActiveFilters();
+        }
+
+        function updateActiveFilters() {
+            const activeFiltersDiv = document.getElementById('activeFilters');
+            activeFiltersDiv.innerHTML = '';
+
+            if (currentFilters.search) {
+                addFilterTag('Search: ' + currentFilters.search);
+            }
+            if (currentFilters.type) {
+                addFilterTag('Type: ' + currentFilters.type);
+            }
+            if (currentFilters.location) {
+                addFilterTag('Location: ' + currentFilters.location);
+            }
+            if (currentFilters.capacity) {
+                addFilterTag('Capacity: ' + currentFilters.capacity);
+            }
+        }
+
+        function addFilterTag(text) {
+            const activeFiltersDiv = document.getElementById('activeFilters');
+            const tag = document.createElement('span');
+            tag.className = 'filter-tag';
+            tag.innerHTML = `
+                <i class="fas fa-times"></i>
+                ${text}
+            `;
+            tag.addEventListener('click', function() {
+                // Remove specific filter
+                if (text.includes('Search:')) {
+                    currentFilters.search = '';
+                    document.getElementById('searchInput').value = '';
+                } else if (text.includes('Type:')) {
+                    currentFilters.type = '';
+                    document.getElementById('typeFilter').value = '';
+                } else if (text.includes('Location:')) {
+                    currentFilters.location = '';
+                    document.getElementById('locationFilter').value = '';
+                } else if (text.includes('Capacity:')) {
+                    currentFilters.capacity = '';
+                    document.getElementById('capacityFilter').value = '';
+                }
+                applyFilters();
+            });
+            activeFiltersDiv.appendChild(tag);
+        }
+
+        function clearAllFilters() {
+            currentFilters = {
+                search: '',
+                type: '',
+                location: '',
+                capacity: '',
+                sortBy: 'featured'
+            };
+
+            document.getElementById('searchInput').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('locationFilter').value = '';
+            document.getElementById('capacityFilter').value = '';
+            document.getElementById('sortBy').value = 'featured';
+
+            applyFilters();
+        }
+
+        function toggleFavorite(element) {
+            const icon = element.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                element.classList.add('active');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                element.classList.remove('active');
+            }
+        }
+
+        function toggleView(view) {
+            const container = document.getElementById('venuesContainer');
+            const buttons = document.querySelectorAll('.view-toggle .btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.view === view) {
+                    btn.classList.add('active');
+                }
+            });
+
+            if (view === 'list') {
+                container.classList.add('list-view');
+            } else {
+                container.classList.remove('list-view');
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

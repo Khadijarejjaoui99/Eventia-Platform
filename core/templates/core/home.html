@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventia</title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS ANIMATION -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CUSTOM STYLE -->
+    {% load static %}
+
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/events.css">
+    <link rel="stylesheet" href="/static/css/utils.css">
+
+</head>
+
+<body>
+       <!-- Navigation -->
+    {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+
+    <section class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="page-header-content">
+                        <h1 class="page-title">Discover <span class="text-gradient">Events, Venues & Vendors</span></h1>
+                        <p class="page-description">
+                            Explore, register, and manage your experiences with ease. Find your perfect experience.
+                        </p>
+                        <div class="page-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">50,000+</div>
+                                <div class="stat-label">Active Events</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">2500+</div>
+                                <div class="stat-label">Users</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">15,000+</div>
+                                <div class="stat-label">Venues Listed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="page-header-image">
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=600&fit=crop"
+                             alt="Events and Venues" class="img-fluid rounded-4 shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <div class="badge-section mb-4">
+                    <i class="fas fa-star me-2"></i>
+                    Key Features
+                </div>
+                <h2 class="section-title">Why Envedia is <span class="text-gradient">Your Ultimate Event Platform</span></h2>
+                <p class="section-description">
+                    Manage events, venues, vendors, and attendees all in one intuitive dashboard.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-image">
+                            <img src="{% static 'images/qr.jpg' %}"
+                                 alt="Smart Ticketing">
+                            <div class="feature-icon">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Smart Ticketing</h4>
+                            <p>Attendees receive unique QR-coded tickets upon registration. Easy check-ins and full control over their profiles and registered events.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-image">
+                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop"
+                                 alt="Organizer Dashboard">
+                            <div class="feature-icon">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Organizer Dashboard</h4>
+                            <p>Event organizers can add, update, edit, and delete events with complete visibility of attendee registrations and analytics.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-image">
+                            <img src="{% static 'images/venue.jpg' %}"
+                                 alt="Venue Management">
+                            <div class="feature-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Venue Management</h4>
+                            <p>Venue owners can add, edit, delete, and showcase venues to attract organizers and attendees.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-image">
+                            <img src="{% static 'images/vendor.jpg' %}"
+                                 alt="Vendor Management">
+                            <div class="feature-icon">
+                                <i class="fas fa-store"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Vendor Management</h4>
+                            <p>Vendors can add and manage their services, ensuring they reach the right events and attendees seamlessly.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-card">
+                        <div class="feature-image">
+                            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&h=400&fit=crop"
+                                 alt="Multi-Role Platform">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Multi-Role Platform</h4>
+                            <p>Supports attendees, organizers, venue owners, and vendors with dedicated dashboards tailored to their needs.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+                    <div class="feature-card">
+                        <div class="feature-image">
+                            <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop"
+                                 alt="Secure & Reliable">
+                            <div class="feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Secure & Reliable</h4>
+                            <p>Envedia ensures your data, events, and transactions are safe with strong role-based access controls for all user types.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="stats">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number">50,000+</div>
+                            <div class="stat-label">Events Hosted</div>
+                            <div class="stat-growth">+25% growth</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number">2.5M+</div>
+                            <div class="stat-label">Active Users</div>
+                            <div class="stat-growth">+40% growth</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number">15,000+</div>
+                            <div class="stat-label">Venues Listed</div>
+                            <div class="stat-growth">+30% growth</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number">99.9%</div>
+                            <div class="stat-label">Satisfaction Rate</div>
+                            <div class="stat-growth">+5% growth</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EVENT CATEGORIES -->
+    <section id="venues" class="categories">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <div class="badge-section mb-4">
+                    <i class="fas fa-compass me-2"></i>
+                    Explore Categories
+                </div>
+                <h2 class="section-title">Find Your Perfect <span class="text-gradient">Event Experience</span></h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="category-card business">
+                        <div class="category-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="category-content">
+                            <h4>Technology</h4>
+                            <div class="category-count">12,450+ Events</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="category-card music">
+                        <div class="category-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div class="category-content">
+                            <h4>Busniess</h4>
+                            <div class="category-count">8,320+ Events</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="category-card arts">
+                        <div class="category-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="category-content">
+                            <h4>Arts</h4>
+                            <div class="category-count">6,780+ Events</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="category-card food">
+                        <div class="category-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="category-content">
+                            <h4>Food</h4>
+                            <div class="category-count">4,560+ Events</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                    <div class="category-card gaming">
+                        <div class="category-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="category-content">
+                            <h4>Sports</h4>
+                            <div class="category-count">3,890+ Events</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+                    <div class="category-card photography">
+                        <div class="category-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <div class="category-content">
+                            <h4>Education</h4>
+                            <div class="category-count">2,340+ Events</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED EVENTS -->
+<section id="events" class="events">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <div class="badge-section mb-4">
+                <i class="fas fa-fire me-2"></i>
+                Trending Events
+            </div>
+            <h2 class="section-title">Don't Miss These <span class="text-gradient">Amazing Events</span></h2>
+        </div>
+
+        <div class="row g-4">
+            {% for event in featured_events %}
+                <div class="col-lg-4 col-md-6 event-item"
+                     data-category="{{ event.category|lower }}"
+                     data-location="{{ event.location|lower }}"
+                     data-date="{{ event.date }}"
+                     data-price="{{ event.price }}"
+                     data-rating="{{ event.rating }}"
+                     data-featured="{{ event.featured|yesno:'true,false' }}">
+                    <div class="event-card">
+                        <div class="event-image">
+                            {% if event.image %}
+                                <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                            {% else %}
+                                <img src="{% static 'core/images/1.jpg' %}" alt="{{ event.title }}">
+                            {% endif %}
+                            <div class="event-badge">{{ event.category|title }}</div>
+                            <div class="event-favorite" onclick="toggleFavorite(this)">
+                                <i class="far fa-heart"></i>
+                            </div>
+                            <div class="event-overlay">
+                                <div class="event-location">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="event-content">
+                            <div class="event-header">
+                                <h4>{{ event.title }}</h4>
+                                <div class="event-rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>{{ event.rating }}</span>
+                                </div>
+                            </div>
+
+                            <p>{{ event.description|truncatechars:200 }}...</p>
+
+                            <div class="event-tags">
+                                {% for tag in event.tags.all %}
+                                    <span class="tag">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+
+                            <div class="event-meta">
+                                <div class="event-date">
+                                    <i class="fas fa-calendar me-2"></i>{{ event.date }}
+                                </div>
+                                <div class="event-attendees">
+                                    <i class="fas fa-users me-2"></i>{{ event.attendees }}
+                                </div>
+                            </div>
+
+                            <div class="event-footer">
+                                <div class="event-price">${{ event.price }}</div>
+                                <a href="{% url 'event_detail' event.id %}" class="btn btn-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <!-- Fallback if no events exist -->
+                <div class="col-12 text-center">
+                    <p>No trending events found at the moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="{% url 'events' %}" class="btn btn-outline-primary btn-lg">
+                Explore All Events
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <div class="badge-section mb-4">
+                    <i class="fas fa-comments me-2"></i>
+                    Success Stories
+                </div>
+                <h2 class="section-title">What Our Users <span class="text-gradient">Are Saying</span></h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"Eventia made planning our annual tech conference effortless.
+                        From scheduling sessions to managing attendees, everything was smooth and well organized."</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+                                 alt="Sarah Chen">
+                            <div class="author-info">
+                                <div class="author-name">Frank McKinney</div>
+                                <div class="author-role">Event Organizer</div>
+                                <div class="author-company">TechVentures Inc.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"Our booking efficiency improved by 45% after switching to Eventia. The platform is intuitive and our clients love it."</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+                                 alt="Marcus Rodriguez">
+                            <div class="author-info">
+                                <div class="author-name">Marcus Rodriguez</div>
+                                <div class="author-role">Venue Manager</div>
+                                <div class="author-company">Grand Convention Center</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"As an attendee, Eventia helped me discover events, track schedules,
+                        and never miss important sessions. It made the whole experience stress-free."</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+                                 alt="Emily Watson">
+                            <div class="author-info">
+                                <div class="author-name"> Frank McKinney</div>
+                                <div class="author-role">Attendee</div>
+                                <div class="author-company">Freelance Designer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-wrapper">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="newsletter-content">
+                            <h3>Stay Updated with Latest Events</h3>
+                            <p>Get notified about upcoming events and exclusive offers delivered to your inbox.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <form class="newsletter-form">
+                            <div class="input-group">
+                                <input type="email" class="form-control" placeholder="Enter your email address">
+                                <button class="btn btn-primary" type="submit">Subscribe</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-brand">
+                        <i class="fas fa-calendar-star me-2"></i>
+                        <span>Eventia</span>
+                    </div>
+                    <p class="footer-description">
+                        Creating unforgettable moments through innovative event management and AI-powered networking.
+                    </p>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Connect</h5>
+                    <div class="social-links">
+                        <a href="#"><i class="fas fa-globe"></i></a>
+                        <a href="#"><i class="fas fa-comments"></i></a>
+                        <a href="#"><i class="fas fa-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS ANIMATION JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- CUSTOM JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

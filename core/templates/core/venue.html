@@ -1,0 +1,319 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ venue.name }}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="/static/css/venue.css?v=2">
+    <link rel="stylesheet" href="/static/css/utils.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+    <!-- Venue Hero Section -->
+    <section class="venue-hero">
+        <div class="container">
+            <div class="venue-breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'venues' %}">Venues</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ venue.name }}</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="venue-hero-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="venue-info">
+                            <div class="venue-category">{{ venue.category }}</div>
+                            <h1 class="venue-title">{{ venue.name }}</h1>
+
+                            <div class="venue-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-users"></i>
+                                    <span>Up to {{ venue.capacity }} guests</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ venue.city }}, {{ venue.address }}</span>
+                                </div>
+                            </div>
+
+                            <div class="venue-price">
+                                <span class="price-label">Starting from</span>
+                                <span class="price-value">${{ venue.price_start }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="venue-image-container">
+                            <img src="{{ venue.image1.url }}" alt="{{ venue.name }}" class="venue-image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Venue Content Section -->
+    <section class="venue-content-section">
+        <div class="container">
+            <div class="row equal-height">
+                <div class="col-lg-8">
+                    <div class="venue-details-card">
+                        <h2 class="section-title">About This Venue</h2>
+                        <div class="venue-description-full">
+                            <p>{{ venue.description}}</p>
+
+                         <div class="venue-gallery">
+                             <h3 class="subsection-title">Gallery</h3>
+                             <div class="gallery-grid">
+                                    <div class="gallery-item">
+                                         {% if venue.image1 %}
+                                                <img src="{{ venue.image1.url }}" alt="{{ venue.name }}">
+                                         {% endif %}
+                                    </div>
+                                    <div class="gallery-item">
+                                        {% if venue.image2 %}
+                                                <img src="{{ venue.image2.url }}" alt="{{ venue.name }}">
+                                         {% endif %}
+                                    </div>
+                                    <div class="gallery-item">
+                                        {% if venue.image3 %}
+                                                <img src="{{ venue.image3.url }}" alt="{{ venue.name }}">
+                                         {% endif %}
+                                    </div>
+                                    <div class="gallery-item">
+                                        {% if venue.image4 %}
+                                                <img src="{{ venue.image4.url }}" alt="{{ venue.name }}">
+                                         {% endif %}
+                                    </div>
+                                </div>
+                         </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="sidebar-content">
+                        <div class="venue-details-sidebar">
+                            <h2 class="section-title">Venue Details</h2>
+                            <div class="detail-list">
+                                <div class="detail-item">
+                                    <i class="fas fa-ruler-combined"></i>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Size</span>
+                                        <span class="detail-value">{{ venue.size }} sq ft</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-users"></i>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Capacity</span>
+                                        <span class="detail-value">{{ venue.capacity }} (seated)</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Price Range</span>
+                                        <span class="detail-value">${{ venue.price_start }} - ${{ venue.price_end }}</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div class="detail-info">
+                                        <span class="detail-label">Event Duration</span>
+                                        <span class="detail-value">{{ venue.event_duration }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <h2 class="section-title">Contact Information</h2>
+                            <div class="contact-info">
+                                {% if venue.phone %}
+                                <div class="contact-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span>{{ venue.phone }}</span>
+                                </div>
+                                {% endif %}
+                                {% if venue.email %}
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>{{ venue.email }}</span>
+                                </div>
+                                {% endif %}
+                                {% if venue.address %}
+                                <div class="contact-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ venue.address }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="amenities-card">
+                            <h2 class="section-title">Amenities</h2>
+                            <div class="amenities-list">
+                                {% if venue.wifi %}
+                                <div class="amenity">
+                                    <i class="fas fa-wifi"></i>
+                                    <span>Free WiFi</span>
+                                </div>
+                                {% endif %}
+
+                                {% if venue.parking %}
+                                <div class="amenity">
+                                    <i class="fas fa-parking"></i>
+                                    <span>Parking Available</span>
+                                </div>
+                                {% endif %}
+
+                                {% if venue.catering %}
+                                <div class="amenity">
+                                    <i class="fas fa-utensils"></i>
+                                    <span>Catering Services</span>
+                                </div>
+                                {% endif %}
+
+                                {% if venue.accessible %}
+                                <div class="amenity">
+                                    <i class="fas fa-wheelchair"></i>
+                                    <span>Accessible</span>
+                                </div>
+                                {% endif %}
+
+                                {% if venue.sound_system %}
+                                <div class="amenity">
+                                    <i class="fas fa-microphone"></i>
+                                    <span>Sound System</span>
+                                </div>
+                                {% endif %}
+
+                                {% if venue.av_equipment %}
+                                <div class="amenity">
+                                    <i class="fas fa-tv"></i>
+                                    <span>AV Equipment</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-brand">
+                        <i class="fas fa-calendar-star me-2"></i>
+                        <span>Eventia</span>
+                    </div>
+                    <p class="footer-description">
+                        Creating unforgettable moments through innovative event management and AI-powered networking.
+                    </p>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Connect</h5>
+                    <div class="social-links">
+                        <a href="#"><i class="fas fa-globe"></i></a>
+                        <a href="#"><i class="fas fa-comments"></i></a>
+                        <a href="#"><i class="fas fa-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Booking Modal
+        const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+
+        document.getElementById('bookBtn').addEventListener('click', function() {
+            bookingModal.show();
+        });
+
+        document.getElementById('submitBooking').addEventListener('click', function() {
+            // Basic form validation
+            const form = document.getElementById('bookingForm');
+            if (form.checkValidity()) {
+                // In a real application, you would submit form data to your server
+                alert('Booking request submitted successfully! We will contact you within 24 hours.');
+                bookingModal.hide();
+                form.reset();
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

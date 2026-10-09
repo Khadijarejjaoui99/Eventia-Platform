@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS ANIMATION -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- CUSTOM STYLE -->
+    {% load static %}
+    <!-- Header + footer styles (shared) -->
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- Page-specific styles (must come AFTER shared styles) -->
+    <link rel="stylesheet" href="/static/css/register.css">
+    <link rel="stylesheet" href="/static/css/utils.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+        {% include 'core/partials/header_public.html' %}
+
+    <!-- REGISTRATION PAGE MAIN CONTENT -->
+    <main class="register-page">
+        <div class="register-container">
+            <div class="register-grid">
+                <!-- Left Side - Branding -->
+                <div class="register-branding" data-aos="fade-right" data-aos-delay="100">
+
+                    <h2 class="register-title">
+                        Join Our Community
+                        <span class="register-title-gradient">Create Amazing Events</span>
+                    </h2>
+
+                    <p class="register-subtitle">
+                        Start your journey with Eventia and connect with thousands of event organizers, vendors, and attendees worldwide.
+                    </p>
+
+                    <div class="register-features">
+                        <div class="register-feature-card">
+                            <div class="register-feature-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <p class="register-feature-number" style="color: #8b5cf6;">10K+</p>
+                                <p class="register-feature-label">Events</p>
+                            </div>
+                        </div>
+
+                        <div class="register-feature-card">
+                            <div class="register-feature-icon" style="background: linear-gradient(135deg, #ec4899 0%, #6366f1 100%);">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div>
+                                <p class="register-feature-number" style="color: #ec4899;">1K+</p>
+                                <p class="register-feature-label">Vendors</p>
+                            </div>
+                        </div>
+
+                        <div class="register-feature-card">
+                            <div class="register-feature-icon" style="background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <p class="register-feature-number" style="color: #6366f1;">500+</p>
+                                <p class="register-feature-label">Venues</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="register-trust">
+                        <div class="trust-item">
+                            <div class="trust-dot live"></div>
+                            <span>Secure Registration</span>
+                        </div>
+                        <div class="trust-item">
+                            <div class="trust-dot"></div>
+                            <span>Free to Join</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Registration Form -->
+                <div class="register-form-card" data-aos="fade-left" data-aos-delay="200">
+                    <div class="register-form-header">
+                        <h3 class="register-form-title">Create Your Account</h3>
+                        <p class="register-form-description">
+                            Join Eventia and start creating amazing experiences
+                        </p>
+                    </div>
+
+                    <div class="register-form-body">
+                        <form id="registerForm" method="POST" action="{% url 'register' %}">
+                             {% csrf_token %}
+                             <div id="errors" ></div>
+                            <div class="form-group mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-user-tag"></i>
+                                    I am a
+                                </label>
+                                <select class="form-input" name="userRole" required>
+                                    <option value="" disabled selected>Select your role</option>
+                                    <option value="attendee">Attendee</option>
+                                    <option value="venue_owner">Venue Owner</option>
+                                    <option value="organizer">Event Organizer</option>
+                                    <option value="vendor">Vendor</option>
+                                </select>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        First Name
+                                    </label>
+                                    <input type="text" name="firstName" class="form-input" placeholder="Enter your first name" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        Last Name
+                                    </label>
+                                    <input type="text" name="lastName" class="form-input" placeholder="Enter your last name" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Email Address
+                                </label>
+                                <input type="email" name="email" class="form-input" placeholder="Enter your email" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-lock"></i>
+                                        Password
+                                    </label>
+                                    <div class="password-input-wrapper">
+                                        <input type="password" name="password" class="form-input" placeholder="Create a password" id="passwordInput" required>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('passwordInput', 'passwordIcon')">
+                                            <i class="fas fa-eye" id="passwordIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-lock"></i>
+                                        Confirm Password
+                                    </label>
+                                    <div class="password-input-wrapper">
+                                        <input type="password" name="confirmPassword" class="form-input" placeholder="Confirm your password" id="confirmPasswordInput" required>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPasswordInput', 'confirmPasswordIcon')">
+                                            <i class="fas fa-eye" id="confirmPasswordIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                                    <label for="agreeTerms" class="checkbox-label">
+                                        I agree to the <a href="#" class="link">Terms and Conditions</a> and <a href="#" class="link">Privacy Policy</a>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="register-submit-btn">
+                                Create Account
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+
+                            <!-- MOVED: "Sign in" Link INTO the form body -->
+                            <div class="text-center mt-3">
+                                <p class="mb-0">
+                                    Already have an account?
+                                    <a href="/login/" class="link">Sign in here</a>
+                                </p>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-brand">
+                        <i class="fas fa-calendar-star me-2"></i>
+                        <span>Eventia</span>
+                    </div>
+                    <p class="footer-description">
+                        Creating unforgettable moments through innovative event management and AI-powered networking.
+                    </p>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Connect</h5>
+                    <div class="social-links">
+                        <a href="#"><i class="fas fa-globe"></i></a>
+                        <a href="#"><i class="fas fa-comments"></i></a>
+                        <a href="#"><i class="fas fa-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS ANIMATION JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- CUSTOM JS -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Password toggle functionality
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const passwordIcon = document.getElementById(iconId);
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            }
+        }
+
+
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        document.getElementById("registerForm").onsubmit = function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+
+            fetch("/register/", {
+                method: "POST",
+                headers: { "HX-Request": "true" },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                let errorBox = document.getElementById("errors");
+                errorBox.innerHTML = ""; // clear old errors
+
+                if (data.status === "error") {
+                    data.errors.forEach(err => {
+                        errorBox.innerHTML += `
+                            <div class="alert alert-danger" role="alert">
+                                ${err}
+                            </div>
+                        `;
+                    });
+                }
+                else if (data.status === "success") {
+                    window.location.href = "/login/";
+                }
+            });
+        };
+
+
+    </script>
+
+
+</body>
+</html>

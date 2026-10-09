@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ ticket.user.get_full_name  }} ticket </title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/utils.css">
+    <link rel="stylesheet" href="/static/css/ticket.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+{% block content %}
+<div class="container mt-3">
+    <div class="ticket-wrapper">
+        <div class="ticket-card">
+            <div class="ticket-header holographic">
+                <h2>Your Ticket for {{ ticket.event.title }}</h2>
+            </div>
+            <div class="ticket-perforation"></div>
+            <div class="ticket-content">
+                <div class="ticket-decoration top-right"></div>
+                <div class="ticket-decoration bottom-left"></div>
+
+                <div class="user-info">
+                    <p><i class="fas fa-user"></i> {{ ticket.user.get_full_name }}</p>
+                    <p><i class="fas fa-envelope"></i> {{ ticket.user.email }}</p>
+                </div>
+
+                {% if ticket.qr_code %}
+                <div class="qr-section">
+                    <div class="qr-code">
+                        <img src="{{ ticket.qr_code.url }}" alt="Ticket QR Code">
+                    </div>
+                    <div class="qr-label">Scan this code at the event entrance</div>
+                </div>
+                {% endif %}
+
+                <div class="ticket-actions">
+                    <a href="{% url 'user_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+                    <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+                </div>
+            </div>
+            <div class="ticket-footer">
+                <div class="ticket-number">Ticket ID: #{{ ticket.id }}</div>
+                <div class="status-badge">Valid</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Fix scrolling animation
+    window.addEventListener("scroll", function () {
+        const navbar = document.querySelector(".navbar");
+        if (window.scrollY > 10) {
+            navbar.classList.add("scrolled");
+        } else {
+            navbar.classList.remove("scrolled");
+        }
+    });
+</script>
+
+</body>
+</html>

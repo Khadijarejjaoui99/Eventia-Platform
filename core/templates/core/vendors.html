@@ -1,0 +1,499 @@
+<!--{% load static %}-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendors</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    {% load static %}
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/vendors.css?v=2">
+    <link rel="stylesheet" href="/static/css/utils.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="page-header-content">
+                        <h1 class="page-title">Find Perfect <span class="text-gradient">Vendors</span></h1>
+                        <p class="page-description">Connect with top-rated service providers to make your event unforgettable</p>
+                        <div class="page-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">1000+</div>
+                                <div class="stat-label">Verified Vendors</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">50+</div>
+                                <div class="stat-label">Categories</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">4.8</div>
+                                <div class="stat-label">Average Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="page-header-image">
+                        <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=600&fit=crop" alt="Event Vendors">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-wrapper">
+                <div class="row g-3">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search vendors..." class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <select id="categoryFilter" class="form-select">
+                            <option value="">All Categories</option>
+                            <option value="food">Food & Catering</option>
+                            <option value="photography">Photography</option>
+                            <option value="decoration">Event Decoration</option>
+                            <option value="music">Music & Entertainment</option>
+                            <option value="transport">Transportation</option>
+                            <option value="tech">Event Technology</option>
+                            <option value="staff">Event Staff</option>
+                            <option value="other">Other Services</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <select id="locationFilter" class="form-select">
+                             <option value="">All Locations</option>
+                            <option value="nanjing">Nanjing</option>
+                            <option value="beijing">Beijing</option>
+                            <option value="shanghai">Shanghai</option>
+                            <option value="guangzhou">Guangzhou</option>
+                            <option value="shenzhen">Shenzhen</option>
+                            <option value="chongqing">Chongqing</option>
+                            <option value="tianjin">Tianjin</option>
+                            <option value="hangzhou">Hangzhou</option>
+                            <option value="chengdu">Chengdu</option>
+                            <option value="wuhan">Wuhan</option>
+                            <option value="xian">Xi'an</option>
+
+                            <!-- Major international cities -->
+                            <option value="new-york">New York</option>
+                            <option value="london">London</option>
+                            <option value="paris">Paris</option>
+                            <option value="tokyo">Tokyo</option>
+                            <option value="sydney">Sydney</option>
+                            <option value="dubai">Dubai</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-tags">
+                    <div class="active-filters" id="activeFilters">
+                        <!-- Active filters will be added here dynamically -->
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm clear-filters" onclick="clearAllFilters()">
+                        <i class="fas fa-redo"></i>
+                        Clear All Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vendors Grid -->
+    <section class="vendors-grid-section">
+        <div class="container">
+            <div class="vendors-header">
+                <h2 class="vendors-count">Showing <span id="vendorCount">{{ vendors.count }}</span> Vendors</h2>
+                <div class="view-toggle">
+                    <button class="btn btn-outline-secondary btn-sm active" data-view="grid" onclick="toggleView('grid')">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" data-view="list" onclick="toggleView('list')">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+
+<div class="row g-4" id="vendorsContainer">
+    {% for vendor in vendors %}
+    <div class="col-lg-4 col-md-6 vendor-item"
+         data-category="{{ vendor.category|lower}}"
+         data-location="{{ vendor.location|lower }}">
+
+        <div class="vendor-card">
+            <div class="vendor-image">
+                <img src="{{ vendor.image.url }}" alt="{{ vendor.name }}">
+
+                <div class="vendor-badge">
+                    {{ vendor.get_category_display }}
+                </div>
+
+                <div class="vendor-favorite" onclick="toggleFavorite(this)">
+                    <i class="far fa-heart"></i>
+                </div>
+
+                <div class="vendor-overlay">
+                    <div class="vendor-location">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        {{ vendor.location }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="vendor-content">
+                <div class="vendor-header">
+                    <h4>{{ vendor.name }}</h4>
+                    <div class="vendor-rating">
+                        <i class="fas fa-star"></i>
+                        <span>{{ vendor.rating }}</span>
+                    </div>
+                </div>
+
+                   <p>{{ vendor.description|truncatechars:200 }}...</p>
+
+                <div class="vendor-tags">
+                    <!-- Static tags because not in DB yet -->
+                    <span class="tag">Professional</span>
+                    <span class="tag">Top-rated</span>
+                </div>
+
+                <div class="vendor-meta">
+                    <div class="vendor-experience">
+                        <i class="fas fa-award me-2"></i>
+                        {{ vendor.experience_years }} years experience
+                    </div>
+                    <div class="vendor-price">
+                        <i class="fas fa-dollar-sign me-2"></i>{{ vendor.price }}
+                    </div>
+                </div>
+
+                <div class="vendor-footer">
+                    <a href="{% url 'vendor_detail' vendor.id %}" class="btn btn-primary btn-sm">View details</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+
+            <!-- Pagination -->
+{#            <div class="pagination-wrapper">#}
+{#                <nav aria-label="Vendors pagination">#}
+{#                    <ul class="pagination justify-content-center">#}
+{#                        <li class="page-item disabled">#}
+{#                            <a class="page-link" href="#" tabindex="-1">#}
+{#                                <i class="fas fa-chevron-left"></i>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        <li class="page-item active"><a class="page-link" href="#">1</a></li>#}
+{#                        <li class="page-item"><a class="page-link" href="#">2</a></li>#}
+{#                        <li class="page-item"><a class="page-link" href="#">3</a></li>#}
+{#                        <li class="page-item"><a class="page-link" href="#">4</a></li>#}
+{#                        <li class="page-item"><a class="page-link" href="#">5</a></li>#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="#">#}
+{#                                <i class="fas fa-chevron-right"></i>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                    </ul>#}
+{#                </nav>#}
+{#            </div>#}
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-wrapper">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="newsletter-content">
+                            <h3>Connect with Top Vendors</h3>
+                            <p>Get notified about new vendors and exclusive offers for your perfect event services.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <form class="newsletter-form">
+                            <div class="input-group">
+                                <input type="email" class="form-control" placeholder="Enter your email address">
+                                <button class="btn btn-primary" type="submit">Subscribe</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-brand">
+                        <i class="fas fa-calendar-star me-2"></i>
+                        <span>Eventia</span>
+                    </div>
+                    <p class="footer-description">
+                        Creating unforgettable moments through innovative event management and AI-powered networking.
+                    </p>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Connect</h5>
+                    <div class="social-links">
+                        <a href="#"><i class="fas fa-globe"></i></a>
+                        <a href="#"><i class="fas fa-comments"></i></a>
+                        <a href="#"><i class="fas fa-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Filter and search functionality
+        let currentFilters = {
+            search: '',
+            category: '',
+            location: '',
+            price: '',
+            sortBy: 'featured'
+        };
+
+        // Initialize filters
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            currentFilters.search = e.target.value.toLowerCase();
+            applyFilters();
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', function(e) {
+            currentFilters.category = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('locationFilter').addEventListener('change', function(e) {
+            currentFilters.location = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('priceFilter').addEventListener('change', function(e) {
+            currentFilters.price = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('sortBy').addEventListener('change', function(e) {
+            currentFilters.sortBy = e.target.value;
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const vendorItems = document.querySelectorAll('.vendor-item');
+            let visibleCount = 0;
+
+            vendorItems.forEach(item => {
+                let show = true;
+
+                // Search filter
+                if (currentFilters.search) {
+                    const title = item.querySelector('h4').textContent.toLowerCase();
+                    const description = item.querySelector('p').textContent.toLowerCase();
+                    if (!title.includes(currentFilters.search) && !description.includes(currentFilters.search)) {
+                        show = false;
+                    }
+                }
+
+                // Category filter
+                if (currentFilters.category && item.dataset.category.toLowerCase() !== currentFilters.category.toLowerCase()) {
+                    show = false;
+                }
+
+
+                // Location filter
+                 if (currentFilters.location && item.dataset.location.toLowerCase() !== currentFilters.location.toLowerCase()) {
+                    show = false;
+                }
+
+                // Price filter
+                if (currentFilters.price && item.dataset.price !== currentFilters.price) {
+                    show = false;
+                }
+
+                if (show) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Update vendor count
+            document.getElementById('vendorCount').textContent = visibleCount;
+
+            // Update active filters display
+            updateActiveFilters();
+        }
+
+        function updateActiveFilters() {
+            const activeFiltersDiv = document.getElementById('activeFilters');
+            activeFiltersDiv.innerHTML = '';
+
+            if (currentFilters.search) {
+                addFilterTag('Search: ' + currentFilters.search);
+            }
+            if (currentFilters.category) {
+                addFilterTag('Category: ' + currentFilters.category);
+            }
+            if (currentFilters.location) {
+                addFilterTag('Location: ' + currentFilters.location);
+            }
+            if (currentFilters.price) {
+                addFilterTag('Price: ' + currentFilters.price);
+            }
+        }
+
+        function addFilterTag(text) {
+            const activeFiltersDiv = document.getElementById('activeFilters');
+            const tag = document.createElement('span');
+            tag.className = 'filter-tag';
+            tag.innerHTML = `
+                <i class="fas fa-times"></i>
+                ${text}
+            `;
+            tag.addEventListener('click', function() {
+                // Remove specific filter
+                if (text.includes('Search:')) {
+                    currentFilters.search = '';
+                    document.getElementById('searchInput').value = '';
+                } else if (text.includes('Category:')) {
+                    currentFilters.category = '';
+                    document.getElementById('categoryFilter').value = '';
+                } else if (text.includes('Location:')) {
+                    currentFilters.location = '';
+                    document.getElementById('locationFilter').value = '';
+                } else if (text.includes('Price:')) {
+                    currentFilters.price = '';
+                    document.getElementById('priceFilter').value = '';
+                }
+                applyFilters();
+            });
+            activeFiltersDiv.appendChild(tag);
+        }
+
+        function clearAllFilters() {
+            currentFilters = {
+                search: '',
+                category: '',
+                location: '',
+                price: '',
+                sortBy: 'featured'
+            };
+
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('locationFilter').value = '';
+            document.getElementById('priceFilter').value = '';
+            document.getElementById('sortBy').value = 'featured';
+
+            applyFilters();
+        }
+
+        function toggleFavorite(element) {
+            const icon = element.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                element.classList.add('active');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                element.classList.remove('active');
+            }
+        }
+
+        function toggleView(view) {
+            const container = document.getElementById('vendorsContainer');
+            const buttons = document.querySelectorAll('.view-toggle .btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.view === view) {
+                    btn.classList.add('active');
+                }
+            });
+
+            if (view === 'list') {
+                container.classList.add('list-view');
+            } else {
+                container.classList.remove('list-view');
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

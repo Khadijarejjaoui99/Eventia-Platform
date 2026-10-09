@@ -1,0 +1,561 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Events</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    {% load static %}
+     <!-- Header + footer styles (shared) -->
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <!-- Page-specific styles (must come AFTER shared styles) -->
+  <link rel="stylesheet" href="/static/css/events.css?v=3">
+    <link rel="stylesheet" href="/static/css/utils.css">
+
+</head>
+
+<body>
+    <!-- Navigation -->
+   {% if user.is_authenticated %}
+        {% include 'core/partials/header_dashboard.html' %}
+    {% else %}
+        {% include 'core/partials/header_public.html' %}
+    {% endif %}
+<section class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="page-header-content">
+                        <h1 class="page-title">Discover Amazing <span class="text-gradient">Events</span></h1>
+                        <p class="page-description">
+                            Find your perfect experience from thousands of events worldwide.
+                            From tech conferences to music festivals, we have something for everyone.
+                        </p>
+                        <div class="page-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">50,000+</div>
+                                <div class="stat-label">Active Events</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">2.5M+</div>
+                                <div class="stat-label">Attendees</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">150+</div>
+                                <div class="stat-label">Countries</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="page-header-image">
+                        <img src="{% static 'images/event.jpg' %}"
+                             alt="Events" class="img-fluid rounded-4 shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-wrapper">
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search events..." class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <select id="categoryFilter" class="form-select">
+                            <option value="">All Categories</option>
+                            <option value="technology">Technology</option>
+                            <option value="business">Business</option>
+                            <option value="arts">Arts & Culture</option>
+                            <option value="sports">Sports</option>
+                            <option value="food">Food & Drink</option>
+                            <option value="education">Education</option>
+                            <option value="health">Health & Wellness</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <select id="locationFilter" class="form-select">
+                            <option value="">All Locations</option>
+                            <option value="nanjing">Nanjing</option>
+                            <option value="beijing">Beijing</option>
+                            <option value="shanghai">Shanghai</option>
+                            <option value="guangzhou">Guangzhou</option>
+                            <option value="shenzhen">Shenzhen</option>
+                            <option value="chongqing">Chongqing</option>
+                            <option value="tianjin">Tianjin</option>
+                            <option value="hangzhou">Hangzhou</option>
+                            <option value="chengdu">Chengdu</option>
+                            <option value="wuhan">Wuhan</option>
+                            <option value="xian">Xi'an</option>
+
+                            <!-- Major international cities -->
+                            <option value="new-york">New York</option>
+                            <option value="london">London</option>
+                            <option value="paris">Paris</option>
+                            <option value="tokyo">Tokyo</option>
+                            <option value="sydney">Sydney</option>
+                            <option value="dubai">Dubai</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <select id="dateFilter" class="form-select">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="this-week">This Week</option>
+                            <option value="this-month">This Month</option>
+                            <option value="next-month">Next Month</option>
+                            <option value="this-year">This Year</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <select id="sortBy" class="form-select">
+                            <option value="featured">Featured</option>
+                            <option value="date">Date</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="rating">Rating</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-tags">
+                    <div class="active-filters" id="activeFilters">
+                    </div>
+                    <button class="btn btn-outline-secondary btn-sm clear-filters" onclick="clearAllFilters()">
+                        <i class="fas fa-redo"></i>
+                        Clear All Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Grid -->
+ <section class="events-grid-section">
+    <div class="container">
+        <div class="events-header">
+            <h2 class="events-count">Showing <span id="eventCount">{{ events.count }}</span> Events</h2>
+            <div class="view-toggle">
+                <button class="btn btn-outline-secondary btn-sm active" data-view="grid" onclick="toggleView('grid')">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" data-view="list" onclick="toggleView('list')">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-4" id="eventsContainer">
+            {% for event in events %}
+            <div class="col-lg-4 col-md-6 event-item"
+                   data-category="{{ event.category|lower }}"
+                   data-location="{{ event.location|lower }}"
+                   data-date="{{ event.date }}"
+                   data-price="{{ event.price }}"
+                   data-rating="{{ event.rating }}"
+                   data-featured="{{ event.featured|yesno:'true,false' }}"
+                   data-order="{{ forloop.counter }}">
+                <div class="event-card">
+                    <div class="event-image">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                        {% else %}
+                            <img src="{% static 'core/images/1.jpg' %}" alt="{{ event.title }}">
+                        {% endif %}
+                        <div class="event-badge">{{ event.category|title }}</div>
+                        <div class="event-favorite" onclick="toggleFavorite(this)">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="event-overlay">
+                            <div class="event-location">
+                                <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-content">
+                        <div class="event-header">
+                            <h4>{{ event.title }}</h4>
+                            <div class="event-rating">
+                                <i class="fas fa-star"></i>
+                                <span>{{ event.rating }}</span>
+                            </div>
+                        </div>
+
+                        <p>{{ event.description|truncatechars:200 }}...</p>
+
+                        <div class="event-tags">
+                            {% for tag in event.tags.all %}
+                                <span class="tag">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="event-meta">
+                            <div class="event-date">
+                                <i class="fas fa-calendar me-2"></i>{{ event.date }}
+                            </div>
+                            <div class="event-attendees">
+                                <i class="fas fa-users me-2"></i>{{ event.attendees }}
+                            </div>
+                        </div>
+
+                        <div class="event-footer">
+                            <div class="event-price">${{ event.price }}</div>
+                            <a href="{% url 'event_detail' event.id %}" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div> <!-- row g-4 -->
+
+    </div> <!-- container -->
+</section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-wrapper">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="newsletter-content">
+                            <h3>Stay Updated with Latest Events</h3>
+                            <p>Get notified about upcoming events and exclusive offers delivered to your inbox.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <form class="newsletter-form">
+                            <div class="input-group">
+                                <input type="email" class="form-control" placeholder="Enter your email address">
+                                <button class="btn btn-primary" type="submit">Subscribe</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-brand">
+                        <i class="fas fa-calendar-star me-2"></i>
+                        <span>Eventia</span>
+                    </div>
+                    <p class="footer-description">
+                        Creating unforgettable moments through innovative event management and AI-powered networking.
+                    </p>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 mb-4">
+                    <h5 class="footer-title">Connect</h5>
+                    <div class="social-links">
+                        <a href="#"><i class="fas fa-globe"></i></a>
+                        <a href="#"><i class="fas fa-comments"></i></a>
+                        <a href="#"><i class="fas fa-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Eventia. All rights reserved. | Transforming events, one connection at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Filter and search functionality
+        let currentFilters = {
+            search: '',
+            category: '',
+            location: '',
+            date: '',
+            sortBy: 'featured'
+        };
+
+        // Initialize filters
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            currentFilters.search = e.target.value.toLowerCase();
+            applyFilters();
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', function(e) {
+            currentFilters.category = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('locationFilter').addEventListener('change', function(e) {
+            currentFilters.location = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('dateFilter').addEventListener('change', function(e) {
+            currentFilters.date = e.target.value;
+            applyFilters();
+        });
+
+        document.getElementById('sortBy').addEventListener('change', function(e) {
+            currentFilters.sortBy = e.target.value;
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const eventItems = document.querySelectorAll('.event-item');
+            let visibleCount = 0;
+
+            const container = document.getElementById('eventsContainer');
+            let itemsArray = Array.from(eventItems);
+
+            if (currentFilters.sortBy === "featured") {
+                itemsArray.sort((a, b) => {
+                    return (b.dataset.featured === "true") - (a.dataset.featured === "true");
+                });
+            }
+            else if (currentFilters.sortBy === "date") {
+                itemsArray.sort((a, b) => {
+                    return new Date(a.dataset.date) - new Date(b.dataset.date);
+                });
+            }
+            else if (currentFilters.sortBy === "price-low") {
+                itemsArray.sort((a, b) => a.dataset.price - b.dataset.price);
+            }
+            else if (currentFilters.sortBy === "price-high") {
+                itemsArray.sort((a, b) => b.dataset.price - a.dataset.price);
+            }
+            else if (currentFilters.sortBy === "rating") {
+                itemsArray.sort((a, b) => parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating));
+            }
+            itemsArray.forEach(item => container.appendChild(item));
+
+
+            eventItems.forEach(item => {
+                let show = true;
+
+                // Search filter
+                if (currentFilters.search) {
+                    const title = item.querySelector('h4').textContent.toLowerCase();
+                    const description = item.querySelector('p').textContent.toLowerCase();
+                    if (!title.includes(currentFilters.search) && !description.includes(currentFilters.search)) {
+                        show = false;
+                    }
+                }
+
+               // Category filter
+                if (currentFilters.category && item.dataset.category && item.dataset.category.toLowerCase() !== currentFilters.category.toLowerCase()) {
+                    show = false;
+                }
+
+                // Location filter
+                if (currentFilters.location && item.dataset.location && !item.dataset.location.toLowerCase().includes(currentFilters.location.toLowerCase())) {
+                    show = false;
+                }
+
+                // Date filter
+                if (currentFilters.date) {
+                    const eventDate = new Date(item.dataset.date);
+                    const today = new Date();
+
+                    switch(currentFilters.date) {
+                        case 'today':
+                            if (eventDate.toDateString() !== today.toDateString()) {
+                                show = false;
+                            }
+                            break;
+                        case 'this-week':
+                           const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                            const end = new Date(start);
+                            end.setDate(start.getDate() + 6);
+                            end.setHours(23, 59, 59, 999);
+
+                            if (eventDate < start || eventDate > end) {
+                                show = false;
+                            }
+                            break;
+                        case 'this-month':
+                            if (eventDate.getMonth() !== today.getMonth() || eventDate.getFullYear() !== today.getFullYear()) {
+                                show = false;
+                            }
+                            break;
+                        case 'next-month':
+                            const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+                            const monthAfterNext = new Date(today.getFullYear(), today.getMonth() + 2, 1);
+                            if (eventDate < nextMonth || eventDate >= monthAfterNext) {
+                                show = false;
+                            }
+                            break;
+                        case 'this-year':
+                            if (eventDate.getFullYear() !== today.getFullYear()) {
+                                show = false;
+                            }
+                            break;
+                    }
+                }
+
+                if (show) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Update event count
+            document.getElementById('eventCount').textContent = visibleCount;
+
+            // Update active filters display
+            updateActiveFilters();
+        }
+
+        function updateActiveFilters() {
+            const activeFiltersDiv = document.getElementById('activeFilters');
+            activeFiltersDiv.innerHTML = '';
+
+            if (currentFilters.search) {
+                addFilterTag('Search: ' + currentFilters.search);
+            }
+            if (currentFilters.category) {
+                addFilterTag('Category: ' + currentFilters.category);
+            }
+            if (currentFilters.location) {
+                addFilterTag('Location: ' + currentFilters.location);
+            }
+            if (currentFilters.date) {
+                addFilterTag('Date: ' + currentFilters.date);
+            }
+        }
+
+        function addFilterTag(text) {
+            const activeFiltersDiv = document.getElementById('activeFilters');
+            const tag = document.createElement('span');
+            tag.className = 'filter-tag';
+            tag.innerHTML = `
+                <i class="fas fa-times"></i>
+                ${text}
+            `;
+            tag.addEventListener('click', function() {
+                // Remove specific filter
+                if (text.includes('Search:')) {
+                    currentFilters.search = '';
+                    document.getElementById('searchInput').value = '';
+                } else if (text.includes('Category:')) {
+                    currentFilters.category = '';
+                    document.getElementById('categoryFilter').value = '';
+                } else if (text.includes('Location:')) {
+                    currentFilters.location = '';
+                    document.getElementById('locationFilter').value = '';
+                } else if (text.includes('Date:')) {
+                    currentFilters.date = '';
+                    document.getElementById('dateFilter').value = '';
+                }
+                applyFilters();
+            });
+            activeFiltersDiv.appendChild(tag);
+        }
+
+        function clearAllFilters() {
+            currentFilters = {
+                search: '',
+                category: '',
+                location: '',
+                date: '',
+                sortBy: 'featured'
+            };
+
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('locationFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            document.getElementById('sortBy').value = 'featured';
+
+            applyFilters();
+        }
+
+        function toggleFavorite(element) {
+            const icon = element.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                element.classList.add('active');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                element.classList.remove('active');
+            }
+        }
+
+        function toggleView(view) {
+            const container = document.getElementById('eventsContainer');
+            const buttons = document.querySelectorAll('.view-toggle .btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.view === view) {
+                    btn.classList.add('active');
+                }
+            });
+
+            if (view === 'list') {
+                container.classList.add('list-view');
+            } else {
+                container.classList.remove('list-view');
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
